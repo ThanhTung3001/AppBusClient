@@ -45,9 +45,7 @@ const TreeListView = ({ data }) => {
                             items: items
                         }
                     });
-                    // console.log('====================================');
-                    console.log(mapperItem);
-                    // console.log('====================================');
+
                     setMenu(mapperItem);
                 }
             })
@@ -58,7 +56,6 @@ const TreeListView = ({ data }) => {
         }
     }
     useEffect(() => {
-
         initMenu();
     }, [])
 

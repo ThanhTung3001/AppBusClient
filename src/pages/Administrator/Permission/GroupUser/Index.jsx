@@ -2,38 +2,39 @@ import React, { useEffect, useState } from 'react'
 import DefaultLayout from '../../../../layout/DefaultLayout'
 import Breadcrumb from '../../../../components/Breadcrumb'
 
-import TreeListView from './TreeList';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { DeleteWithToken, GetWithToken, PostWithToken, PutWithToken } from '../../../../app/api/apiMethod';
-import { fetchMenuByRole } from '../../../../app/reducer/menu/menuReducer';
+// import { fetchUserByUser } from '../../../../app/reducer/User/UserReducer';
 import { Table, Pagination, Checkbox, Button } from 'semantic-ui-react';
 import ReactLoading from 'react-loading';
 import { Icon } from 'semantic-ui-react'
-import GroupMenuEdit from './GroupMenuEdit';
+import GroupUserEdit from './GroupUserEdit';
 import { toast } from 'react-toastify';
-import GroupMenuDelete from './GroupMenuDelete';
-import GroupMenuInsert from './GroupMenuInsert';
+import GroupUserDelete from './GroupUserDelete';
+import { GroupUserInsert } from './GroupUserInsert';
+// import GroupUserInsert from './GroupUserInsert';
+// import GroupUserInsert from './GroupUserInsert';
 
 // import TreeView from './TreeList'
 
-export default function GroupMenu() {
-    const [menu, setMenu] = useState({});
+export default function GroupUser() {
+    const [User, setUser] = useState({});
     const [loading, setLoading] = useState(true);
     const AppToken = useSelector(state => state.user.token);
 
-    const InitMenu = () => {
-        GetWithToken({ url: `/api/Menu/GetAll`, token: AppToken })
+    const InitUser = () => {
+        GetWithToken({ url: `/api/User`, token: AppToken })
             .then(rs => {
                 if (rs.status == 200) {
                     setLoading(false);
-                    setMenu(rs.data.data);
+                    setUser(rs.data.data);
 
                 }
             })
     }
     useEffect(() => {
-        InitMenu();
+        InitUser();
     }, []);
     const [dataSelected, setDataSelected] = useState({});
     const [openEdit, setOpenEdit] = useState(false);
@@ -51,11 +52,11 @@ export default function GroupMenu() {
     }
     const submitInsert = ({ data }) => {
         try {
-            PostWithToken({ url: `/api/Menu/`, body: data })
+            PostWithToken({ url: `/api/User/`, body: data })
                 .then(rs => {
                     if (rs.status == 200) {
-                        toast.success('Thêm menu thành công');
-                        InitMenu();
+                        toast.success('Thêm User thành công');
+                        InitUser();
                     }
                 });
 
@@ -63,16 +64,16 @@ export default function GroupMenu() {
             setOpenInsert(false);
         } catch (error) {
             console.log(error);
-            toast.error('Thêm menu thất bại')
+            toast.error('Thêm User thất bại')
         }
     }
     const submitEdit = ({ data }) => {
         try {
-            PutWithToken({ url: `/api/Menu/${data.id}`, body: data })
+            PutWithToken({ url: `/api/User/${data.id}`, body: data })
                 .then(rs => {
                     if (rs.status == 200) {
-                        toast.success('Cập nhật menu thành công');
-                        InitMenu();
+                        toast.success('Cập nhật User thành công');
+                        InitUser();
                     }
                 });
 
@@ -80,39 +81,34 @@ export default function GroupMenu() {
             setOpenEdit(false);
         } catch (error) {
             console.log(error);
-            toast.error('Cập nhật menu thất bại')
+            toast.error('Cập nhật User thất bại')
         }
     }
     const submitDelete = (id) => {
         try {
-            DeleteWithToken({ url: `/api/Menu/${id}` }).then(rs => {
+            DeleteWithToken({ url: `/api/User/${id}` }).then(rs => {
                 if (rs.status == 200) {
-                    toast.success('Xoá menu thành công');
-                    InitMenu();
+                    toast.success('Xoá User thành công');
+                    InitUser();
                     setOpenEdit(false);
                 }
             })
         } catch (error) {
 
-            toast.error('Xoá menu thất bại')
+            toast.error('Xoá User thất bại')
         }
     }
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="Nhóm menu" />
+            <Breadcrumb pageName="Nhóm vai trò" />
             {
                 loading == true ? <div className="flex  w-full justify-center items-center">
                     <ReactLoading type='spin' height={80} width={80} color='#5856d6' />
                 </div> :
                     <div className='rounded-md border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark flex flex-row justify-center items-start'>
-                        <div className="flex flex-col w-full sm:w-1/3 md:w-1/4 h-full p-8 ">
-                            <h3 className="text-xl sm:text-2xl font-bold text-black dark:text-white">Cây menu</h3>
-                            <div className="mt-12">
-                                <TreeListView />
-                            </div>
-                        </div>
-                        <div className="flex flex-col w-full sm:w-2/3 md:w-3/4 h-full p-8 ">
-                            <h3 className='text-xl sm:text-2xl font-bold text-black dark:text-white'>Quản lý menu</h3>
+
+                        <div className="flex flex-col w-full h-full p-8 ">
+                            <h3 className='text-xl sm:text-2xl font-bold text-black dark:text-white'>Quản lý User</h3>
                             <div className="flex flex-row justify-end">
                                 <Button content="Thêm mới" color='blue' icon='plus' onClick={() => setOpenInsert(true)} />
                             </div>
@@ -120,26 +116,20 @@ export default function GroupMenu() {
                                 <Table.Header>
                                     <Table.Row>
                                         <Table.HeaderCell>STT</Table.HeaderCell>
-                                        <Table.HeaderCell>Tên menu</Table.HeaderCell>
-                                        <Table.HeaderCell>Icon</Table.HeaderCell>
-                                        <Table.HeaderCell>Sử dụng</Table.HeaderCell>
-                                        <Table.HeaderCell>Đường dẫn</Table.HeaderCell>
-                                        <Table.HeaderCell>Là Menu con</Table.HeaderCell>
+                                        <Table.HeaderCell>Tên vai trò</Table.HeaderCell>
+                                        <Table.HeaderCell>Menu được phân quyền</Table.HeaderCell>
                                         <Table.HeaderCell>Thao tác</Table.HeaderCell>
                                     </Table.Row>
                                 </Table.Header>
 
                                 <Table.Body>
                                     {
-                                        (menu).map((e, index) => {
+                                        (User).map((e, index) => {
                                             return (
                                                 <Table.Row key={e.id} >
                                                     <Table.Cell>{index + 1}</Table.Cell>
                                                     <Table.Cell>{e.name}</Table.Cell>
-                                                    <Table.Cell>{e.icon}</Table.Cell>
-                                                    <Table.Cell><Checkbox checked={e.isActive} /></Table.Cell>
-                                                    <Table.Cell>{e.path}</Table.Cell>
-                                                    <Table.Cell><Checkbox checked={!(e.children.length > 0)} /></Table.Cell>
+                                                    <Table.Cell>{e.menuUsers.map(e => e?.menu?.name).join(', ')}</Table.Cell>
                                                     <Table.Cell>
                                                         <button className="p-2" onClick={() => handlerOpenEdit(e)}><Icon name='edit' color='green' /></button>
                                                         <button className="" onClick={() => handlerOpenDelete(e)}><Icon name='trash alternate' color='red' /></button>
@@ -166,15 +156,15 @@ export default function GroupMenu() {
                         </div>
                         {/* block for modal edit */}
                         {
-                            openEdit == true ? <GroupMenuEdit open={openEdit} onClose={() => setOpenEdit(false)} submit={submitEdit} data={dataSelected} /> : <></>
+                            openEdit == true ? <GroupUserEdit open={openEdit} onClose={() => setOpenEdit(false)} submit={submitEdit} data={dataSelected} /> : <></>
 
                         }
                         {
-                            openDelete == true ? <GroupMenuDelete open={openDelete} onClose={() => setOpenDelete(false)} submitDelete={submitDelete} data={dataSelected} /> : <></>
+                            openDelete == true ? <GroupUserDelete open={openDelete} onClose={() => setOpenDelete(false)} submitDelete={submitDelete} data={dataSelected} /> : <></>
 
                         }
                         {
-                            openInsert == true ? <GroupMenuInsert open={openInsert} onClose={() => setOpenInsert(false)} submit={submitInsert} /> : <></>
+                            openInsert == true ? <GroupUserInsert open={openInsert} onClose={() => setOpenInsert(false)} submit={submitInsert} /> : <></>
 
                         }
                     </div>

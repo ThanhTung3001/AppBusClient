@@ -12,6 +12,7 @@ export const loginFullFill = (state, action) => {
     state.token = TYPE_AUTH + response.data.jwToken;
     state.auth = true;
     state.roles = response.data.roles;
+    console.log(TYPE_AUTH + response.data.jwToken);
     storeTokenInCookie(TYPE_AUTH + response.data.jwToken);
     localStorage.setItem('User', JSON.stringify(response.data));
     // localStorage.setItem('token',)

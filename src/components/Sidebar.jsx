@@ -195,18 +195,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       >
                         {(handleClick, open) => {
                           return (
-                            <React.Fragment>
+                            <React.Fragment key={e.id}>
                               <NavLink
-                                to='#'
+                                to={e.path}
                                 className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/' ||
                                   pathname.includes('dashboard')) &&
                                   'bg-graydark dark:bg-meta-4'
                                   }`}
-                                onClick={(e) => {
-                                  e.preventDefault()
+                                onClick={(event) => {
+                                  event.preventDefault()
                                   sidebarExpanded
                                     ? handleClick()
-                                    : setSidebarExpanded(true)
+                                    : setSidebarExpanded(true);
+                                  setItemSelected(e.id);
+                                  navigate(e.path);
+                                  //  alert(e.path)
                                 }}
                               >
                                 <i className={e.icon}></i>

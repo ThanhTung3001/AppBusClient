@@ -153,3 +153,11 @@ dark:hover:text-white text-2xl leading-none px-0 pt-0 pb-0.5;
 [x-cloak] {
 display: none !important;
 }
+.text-4line {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  /* number of lines to show */
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+}

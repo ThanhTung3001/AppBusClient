@@ -38,6 +38,9 @@ const userSlice = createSlice({
             state.token = '';
         },
         initToken: (state, action) => {
+            // console.log('====================================');
+            // console.log(getTokenFromCookie());
+            // console.log('====================================');
             if (getTokenFromCookie() != '') {
 
                 state.token = getTokenFromCookie();
