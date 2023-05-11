@@ -27,7 +27,7 @@ import GroupUser from './pages/Administrator/Permission/GroupUser/Index'
 import EnterpriseInfo from './pages/Administrator/Enterprise/EnterpriseInfo/Index'
 import Vehical from './pages/Administrator/Enterprise/Vehical/Index'
 import 'react-tooltip/dist/react-tooltip.css'
-import Stration from './pages/Administrator/Station/Index'
+import Station from './pages/Administrator/Station/Index'
 const App = () => {
   const [loading, setLoading] = useState(true)
   const preloader = document.getElementById('preloader')
@@ -76,7 +76,7 @@ const App = () => {
           {/* HeThong */}
           <Route path='/QuanTri/DoanhNghiep' element={<ProtectedRoute auth={auth} children={< EnterpriseInfo />} roles={userInfo?.roles} role={ROLE_TYPE.Administrator} />} />
           <Route path='/QuanTri/PhuongTien' element={<ProtectedRoute auth={auth} children={< Vehical />} roles={userInfo?.roles} role={ROLE_TYPE.Administrator} />} />
-          <Route path='/QuanTri/Tram' element={<ProtectedRoute auth={auth} children={< Stration />} roles={userInfo?.roles} role={ROLE_TYPE.Administrator} />} />
+          <Route path='/QuanTri/Tram' element={<ProtectedRoute auth={auth} children={< Station />} roles={userInfo?.roles} role={ROLE_TYPE.Administrator} />} />
           <Route path="*" element={<Notfound />} />
         </Routes>
 

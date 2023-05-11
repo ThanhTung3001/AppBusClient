@@ -12,7 +12,6 @@ export const USER_KEY_INFO = "USER_KEY_INFO";
 
 export const GLOBAL_TOKEN = "";
 
-
 //App Api
 
 export const LOGIN_API = "/api/Account/authenticate";

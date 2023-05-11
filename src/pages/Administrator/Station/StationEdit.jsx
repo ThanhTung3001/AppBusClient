@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Button, Header, Image, Modal } from 'semantic-ui-react';
 import { Field, Form, Formik } from 'formik';
 import Select from 'react-select';
-import { GetWithToken, PostFileWithToken } from '../../../../app/api/apiMethod';
+import { GetWithToken, PostFileWithToken } from '../../../app/api/apiMethod';
 import { FileUploader } from "react-drag-drop-files";
 import * as Yup from 'yup';
 import { Tooltip } from 'react-tooltip'
 import axios from 'axios';
 import moment from 'moment';
-import { BASE_URL } from '../../../../constance/AppUrl';
+import { BASE_URL } from '../../../constance/AppUrl';
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 

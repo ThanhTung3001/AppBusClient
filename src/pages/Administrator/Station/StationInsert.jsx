@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Button, Header, Image, Modal } from 'semantic-ui-react';
 import { Field, Form, Formik } from 'formik';
 import Select from 'react-select';
-import { GetWithToken, PostFileWithToken } from '../../../../app/api/apiMethod';
+import { GetWithToken, PostFileWithToken } from '../../../app/api/apiMethod';
 import { FileUploader } from "react-drag-drop-files";
 import * as Yup from 'yup';
 import { Tooltip } from 'react-tooltip'
 import axios from 'axios';
 import moment from 'moment';
-import { BASE_URL } from '../../../../constance/AppUrl';
+import { BASE_URL } from '../../../constance/AppUrl';
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 
@@ -80,35 +80,17 @@ export default function StrationInsert({ open, submit, onClose, data }) {
     }
 
     const InsertMenuSchema = Yup.object().shape({
-        model: Yup.string()
-            .required('Tên phương tiện là bắt buộc.'),
-        plateNumber: Yup.string()
-            .matches(/^\d{2}[A-Z]-\d{5}$/, 'Số xe không hợp lệ (phải theo định dạng 00A-00000).')
-            .required('Số xe là bắt buộc.'),
-        capacity: Yup.number()
-            .integer('Số chổ ngồi phải là một số nguyên.')
-            .min(1, 'Số chổ ngồi phải lớn hơn hoặc bằng 1.')
-            .optional(),
+        name: Yup.string()
+            .required('Tên trạm là bắt buộc.'),
+        code: Yup.string()
+            .required('Mã trạm là bắt buộc.'),
+        addresss: Yup.string()
+            .required('Địa chỉ là bắt buộc.'),
 
         // organizationId: Yup.number().optional(),
-        lastMaintenanceDate: Yup.date()
-            .required('Ngày bảo trì cuối cùng là bắt buộc.'),
-        totalMileage: Yup.number()
-            .integer('Tổng số Km đi được phải là một số nguyên.')
-            .min(0, 'Tổng số Km đi được phải lớn hơn hoặc bằng 0.')
+        description: Yup.string()
             .optional(),
-        registrationYear: Yup.date()
-            .required('Năm đăng ký là bắt buộc.'),
-        chassisNumber: Yup.string()
-            .required('Số khung là bắt buộc.'),
-        engineNumber: Yup.string()
-            .required('Số máy là bắt buộc.'),
-        isActive: Yup.boolean()
-            .required('Trạng thái hoạt động là bắt buộc.'),
-        numberOfSeats: Yup.number()
-            .integer('Số ghế phải là một số nguyên.')
-            .min(1, 'Số ghế phải lớn hơn hoặc bằng 1.')
-            .required('Số ghế là bắt buộc.'),
+
 
         // icon: Yup.string().required('Required'),
     });
@@ -132,25 +114,19 @@ export default function StrationInsert({ open, submit, onClose, data }) {
             <Modal.Content >
                 <Formik
                     initialValues={{
-                        model: "",
-                        plateNumber: "",
-                        capacity: 0,
-                        lastMaintenanceDate: moment().format('YYYY-MM-DD'),
+                        name: "",
+                        description: "",
+                        latitude: 0,
+                        longitude: 0,
+                        addresss: "",
                         isActive: true,
-                        totalMileage: 0,
-                        registrationYear: moment().format('YYYY-MM-DD'),
-                        chassisNumber: "",
-                        engineNumber: "",
-                        numberOfSeats: 0,
-
+                        code: ""
                     }}
                     validationSchema={InsertMenuSchema}
                     onSubmit={(values) => {
-                        // console.log(values);
-                        values.organizationId = orgSelected.value;
-                        values.avatar = fileUrl;
-                        values.registrationYear = moment(values.registrationYear).year;
-                        submit({ data: values });
+                        console.log(values);
+
+                        //submit({ data: values });
                     }}
                 >
                     {({ errors, touched }) => (
@@ -158,160 +134,82 @@ export default function StrationInsert({ open, submit, onClose, data }) {
                             <div className='grid grid-cols-2'>
                                 <div className='col-1'>
                                     <label className='mb-1 block text-black dark:text-white mt-3'>
-                                        Tên phương tiện <span className='text-danger' data-tooltip-content="Trường bắt buộc, không được để trống!">*</span>
+                                        Mã trạm <span className='text-danger' data-tooltip-content="Trường bắt buộc, không được để trống!">*</span>
 
                                     </label>
                                     <Field
                                         type='text'
-                                        name='model'
-                                        placeholder='Nhập của phương tiện'
+                                        name='code'
+                                        placeholder='Nhập mã của trạm'
                                         className='w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
                                     />
-                                    {errors.model && touched.model ? (
-                                        <span className='text-danger'>{errors.model}</span>
+                                    {errors.code && touched.code ? (
+                                        <span className='text-danger'>{errors.code}</span>
                                     ) : <span className='text-white'>{" "}</span>}
                                     <label className='mb-1 block text-black dark:text-white mt-3'>
-                                        Biển số xe <span className='text-danger' data-tooltip-content="Trường bắt buộc, không được để trống!">*</span>
+                                        Tên trạm <span className='text-danger' data-tooltip-content="Trường bắt buộc, không được để trống!">*</span>
+
                                     </label>
                                     <Field
                                         type='text'
-                                        name='plateNumber'
-                                        placeholder='Nhập biển số xe'
+                                        name='name'
+                                        placeholder='Nhập tên của trạm'
                                         className='w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
                                     />
-                                    {errors.plateNumber && touched.plateNumber ? (
-                                        <span className='text-danger'>{errors.plateNumber}</span>
+                                    {errors.name && touched.name ? (
+                                        <span className='text-danger'>{errors.name}</span>
                                     ) : <span className='text-white'>{" "}</span>}
-                                    <label className='mb-1 block text-black dark:text-white mt-3' >
-                                        Thể tích
+                                    <label className='mb-1 block text-black dark:text-white mt-3'>
+                                        Mô tả
                                     </label>
                                     <Field
-                                        type='number'
+                                        type='text'
+                                        name='description'
+                                        component='textarea'
+                                        placeholder='Nhập mô tả'
+                                        className='w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
+                                    />
+                                    {errors.description && touched.description ? (
+                                        <span className='text-danger'>{errors.description}</span>
+                                    ) : <span className='text-white'>{" "}</span>}
+                                    <label className='mb-1 block text-black dark:text-white mt-3' >
+                                        Địa chỉ <span className='text-danger' data-tooltip-content="Trường bắt buộc, không được để trống!">*</span>
+                                    </label>
+                                    <Field
+                                        type='text'
                                         // component="textarea"
-                                        name='capacity'
-                                        placeholder='Nhập thể tích'
+                                        name='addresss'
+                                        placeholder='Nhập địa chỉ'
                                         className='w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
                                     />
-                                    {errors.capacity && touched.capacity ? (
-                                        <span className='text-danger'>{errors.capacity}</span>
-                                    ) : <span className='text-white'>{" "}</span>}
-                                    <label className='mb-1 block text-black dark:text-white mt-3' >
-                                        Số ghế <span className='text-danger' data-tooltip-content="Trường bắt buộc, không được để trống!">*</span>
-                                    </label>
-                                    <Field
-                                        type='number'
-                                        name='numberOfSeats'
-                                        placeholder='Nhập số ghế'
-                                        className='w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
-                                    />
-                                    {errors.numberOfSeats && touched.numberOfSeats ? (
-                                        <span className='text-danger'>{errors.numberOfSeats}</span>
+                                    {errors.addresss && touched.addresss ? (
+                                        <span className='text-danger'>{errors.addresss}</span>
                                     ) : <span className='text-white'>{" "}</span>}
 
-                                    {/* {errors.address && touched.address ? (
-                                        <span className='text-danger'>{errors.address}</span>
-                                    ) : <span className='text-white'>{" "}</span>} */}
-
-                                    <div className="flex flex-col">
-                                        <span className='mb-1 block text-black dark:text-white mt-3' >
-                                            Thuộc doanh nghiệp
-                                        </span>
-                                        <Select
-                                            options={orgs}
-                                            value={orgSelected}
-                                            onChange={(e) => setOrgSelected(e)}
-                                            required
-                                        />
+                                    <Tooltip anchorSelect='.text-danger' />
+                                </div>
+                                <div className="w-full h-32 flex flex-col mt-3">
+                                    <div className="w-1/2 mr-2">
+                                        <label className='mb-1 mt-3 block font-medium text-black dark:text-white w-full'>
+                                            Thêm ảnh đại diện
+                                        </label>
+                                        <FileUploader handleChange={handleChange} name="file" types={fileTypes} />
                                     </div>
-
+                                    <div className="w-full flex flex-row justify-end m-4">
+                                        {<img className='h-32 w-full rounded-lg object-cover' src={BASE_URL + fileUrl} />}
+                                    </div>
                                 </div>
-                                <div className='col-1 ml-2'>
-                                    <label className='mb-1 block text-black dark:text-white mt-3' >
-                                        Ngày bảo dưỡng gần nhất
-                                    </label>
+                                <div className="flex flex-col">
+                                    <span className='mb-1 block text-black dark:text-white mt-3' >
+                                        Sử dụng
+                                    </span>
                                     <Field
-                                        type='date'
-                                        name='lastMaintenanceDate'
-                                        placeholder='Nhập ngày bảo dưỡng gần nhất'
-                                        className='w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
+                                        type='checkbox'
+                                        name='isActive'
+                                        placeholder='Nhập đường dẫn'
+                                        className='mt-4 w-5 h-5 ml-3 rounded border-[1.5px] border-stroke bg-transparent py-3 px-10 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
                                     />
-                                    {errors.lastMaintenanceDate && touched.lastMaintenanceDate ? (
-                                        <span className='text-danger'>{errors.lastMaintenanceDate}</span>
-                                    ) : <span className='text-white'>{" "}</span>}
-                                    <label className='mb-1 block text-black dark:text-white mt-3' >
-                                        Tổng km đã đi
-                                    </label>
-                                    <Field
-                                        type='number'
-                                        name='totalMileage'
-                                        placeholder='Nhập tổng km đã đi'
-                                        className='w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
-                                    />
-                                    {errors.webSiteAddress && touched.webSiteAddress ? (
-                                        <span className='text-danger'>{errors.webSiteAddress}</span>
-                                    ) : <span className='text-white'>{" "}</span>}
-                                    <label className='mb-1 block text-black dark:text-white mt-3' >
-                                        Năm đăng ký
-                                    </label>
-                                    <Field
-                                        type='date'
-                                        name='registrationYear'
-                                        placeholder='Năm đăng ký'
-                                        className='w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
-                                    />
-                                    {errors.registrationYear && touched.registrationYear ? (
-                                        <span className='text-danger'>{errors.registrationYear}</span>
-                                    ) : <span className='text-white'>{" "}</span>}
-                                    <label className='mb-1 block text-black dark:text-white mt-3' >
-                                        Số khung
-                                    </label>
-                                    <Field
-                                        type='text'
-                                        name='chassisNumber'
-                                        placeholder='Nhập số khung'
-                                        className='w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
-                                    />
-                                    {errors.chassisNumber && touched.chassisNumber ? (
-                                        <span className='text-danger'>{errors.chassisNumber}</span>
-                                    ) : <span className='text-white'>{" "}</span>}
-                                    <label className='mb-1 block text-black dark:text-white mt-3' >
-                                        Nhập số máy
-                                    </label>
-                                    <Field
-                                        type='text'
-
-                                        name='engineNumber'
-                                        placeholder='Nhập số máy'
-                                        className='w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
-                                    />
-                                    {errors.engineNumber && touched.engineNumber ? (
-                                        <span className='text-danger'>{errors.engineNumber}</span>
-                                    ) : <span className='text-white'>{" "}</span>}
-
                                 </div>
-                                <Tooltip anchorSelect='.text-danger' />
-                            </div>
-                            <div className="w-full h-32 flex flex-rowm mt-3">
-                                <div className="w-1/2 mr-2">
-                                    <label className='mb-1 mt-3 block font-medium text-black dark:text-white w-full'>
-                                        Thêm ảnh đại diện
-                                    </label>
-                                    <FileUploader handleChange={handleChange} name="file" types={fileTypes} />
-                                </div>
-                                <div className="w-1/2 flex flex-row justify-end">
-                                    {<img className='h-32 w-full rounded-lg object-cover' src={BASE_URL + fileUrl} />}
-                                </div>
-                            </div>
-                            <div className="flex flex-col">
-                                <span className='mb-1 block text-black dark:text-white mt-3' >
-                                    Sử dụng
-                                </span>
-                                <Field
-                                    type='checkbox'
-                                    name='isActive'
-                                    placeholder='Nhập đường dẫn'
-                                    className='mt-4 w-5 h-5 ml-3 rounded border-[1.5px] border-stroke bg-transparent py-3 px-10 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
-                                />
                             </div>
                             <div className="flex flex-row justify-end w-full mt-4 border-t-2 border-gray mb-4">
                                 <Modal.Actions className='mt-4'>
